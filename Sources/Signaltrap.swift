@@ -59,73 +59,14 @@ public enum Signal: CInt {
 extension Signal: CustomStringConvertible {
     public var description: String {
         func signalCode() -> String {
-            return " (#" + String(describing: self) + ")"
+            return " (#" + String(self.rawValue) + ")"
         }
 
-        switch self {
-            case .SIGHUP:
-                return "Hangup" + signalCode()
-            case .SIGINT:
-                return "Terminal interrupt" + signalCode()
-            case .SIGQUIT:
-                return "Terminal quit" + signalCode()
-            case .SIGILL:
-                return "Illegal instruction" + signalCode()
-            case .SIGTRAP:
-                return "Trace trap" + signalCode()
-            case .SIGABRT:
-                return "IOT Trap" + signalCode()
-            case .SIGBUS:
-                return "BUS error" + signalCode()
-            case .SIGFPE:
-                return "Floating point exception" + signalCode()
-            case .SIGKILL:
-                return "Kill(can't be caught or ignored)" + signalCode()
-            case .SIGUSR1:
-                return "User defined signal 1" + signalCode()
-            case .SIGSEGV:
-                return "Invalid memory segment access" + signalCode()
-            case .SIGUSR2:
-                return "User defined signal 2" + signalCode()
-            case .SIGPIPE:
-                return "Write on a pipe with no reader, Broken pipe" + signalCode()
-            case .SIGALRM:
-                return "Alarm clock" + signalCode()
-            case .SIGTERM:
-                return "Termination" + signalCode()
-            case .SIGSTKFLT:
-                return "Stack fault" + signalCode()
-            case .SIGCHLD:
-                return "Child process has stopped or exited, changed" + signalCode()
-            case .SIGCONT:
-                return "Continue executing, if stopped" + signalCode()
-            case .SIGSTOP:
-                return "Stop executing(can't be caught or ignored)" + signalCode()
-            case .SIGTSTP:
-                return "Terminal stop signal" + signalCode()
-            case .SIGTTIN:
-                return "Background process trying to read, from TTY" + signalCode()
-            case .SIGTTOU:
-                return "Background process trying to write, to TTY" + signalCode()
-            case .SIGURG:
-                return "Urgent condition on socket" + signalCode()
-            case .SIGXCPU:
-                return "CPU limit exceeded" + signalCode()
-            case .SIGXFSZ:
-                return "File size limit exceeded" + signalCode()
-            case .SIGVTALRM:
-                return "Virtual alarm clock" + signalCode()
-            case .SIGPROF:
-                return "Profiling alarm clock" + signalCode()
-            case .SIGWINCH:
-                return "Window size change" + signalCode()
-            case .SIGIO:
-                return "I/O now possible" + signalCode()
-            case .SIGPWR:
-                return "Power failure restart" + signalCode()
-            case .SIGSYS:
-                return "SIGSYS" + signalCode()
+        if let signalName = Optional(String(cString: strsignal(self.rawValue))) {
+            return signalName + signalCode()
         }
+
+        return signalCode()
     }
 }
 
