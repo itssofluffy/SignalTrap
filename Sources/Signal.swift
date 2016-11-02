@@ -63,7 +63,9 @@ extension Signal: CustomStringConvertible {
             return " (#" + String(self.rawValue) + ")"
         }
 
-        if let signalName = Optional(String(cString: strsignal(self.rawValue))) {
+        let signalName = String(cString: strsignal(self.rawValue))
+
+        if (!signalName.isEmpty) {
             return signalName + signalCode()
         }
 
