@@ -21,7 +21,5 @@
 */
 
 #if os(Linux)
-import Glibc
-
 public typealias SigactionHandler = @convention(c)(CInt) -> Void
 #endif
