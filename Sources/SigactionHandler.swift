@@ -1,5 +1,5 @@
 /*
-    Signaltrap.swift
+    SigactionHandler.swift
 
     Copyright (c) 2016 Stephen Whittle  All rights reserved.
 
@@ -23,11 +23,5 @@
 #if os(Linux)
 import Glibc
 
-public func trap(_ signum: Signal, action: SigactionHandler) {
-    var sigAction = sigaction()
-
-    sigAction.__sigaction_handler = unsafeBitCast(action, to: sigaction.__Unnamed_union___sigaction_handler.self)
-
-    sigaction(signum.rawValue, &sigAction, nil)
-}
+public typealias SigactionHandler = @convention(c)(CInt) -> Void
 #endif
