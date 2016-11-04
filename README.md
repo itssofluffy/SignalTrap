@@ -15,15 +15,15 @@ used, add this package as a dependency in `Package.swift`,
 import Signaltrap
 
 let hupHandler: SigactionHandler = { signal in
-    print("received .SIGHUP")
+    print("received .HUP")
 }
 
-trap(.SIGINT) { signal in
+trap(.INT) { signal in
 //
 // do our clear up operations
 //
     exit(0)
 }
 
-trap(.SIGHUP, action: hupHandler)
+trap(.HUP, action: hupHandler)
 ```

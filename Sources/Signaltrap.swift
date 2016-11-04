@@ -23,11 +23,11 @@
 #if os(Linux)
 import Glibc
 
-public func trap(_ signum: Signal, action: SigactionHandler) {
-    var sigAction = sigaction()
+public func trap(_ signal: Signal, action: SigactionHandler) {
+    var signalAction = sigaction()
 
-    sigAction.__sigaction_handler = unsafeBitCast(action, to: sigaction.__Unnamed_union___sigaction_handler.self)
+    signalAction.__sigaction_handler = unsafeBitCast(action, to: sigaction.__Unnamed_union___sigaction_handler.self)
 
-    sigaction(signum.rawValue, &sigAction, nil)
+    sigaction(signal.rawValue, &signalAction, nil)
 }
 #endif

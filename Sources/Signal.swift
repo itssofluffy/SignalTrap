@@ -24,37 +24,104 @@
 import Glibc
 
 public enum Signal: CInt {
-    case SIGHUP = 1
-    case SIGINT = 2
-    case SIGQUIT = 3
-    case SIGILL = 4
-    case SIGTRAP = 5
-    case SIGABRT = 6
-    case SIGBUS = 7
-    case SIGFPE = 8
-    case SIGKILL = 9
-    case SIGUSR1 = 10
-    case SIGSEGV = 11
-    case SIGUSR2 = 12
-    case SIGPIPE = 13
-    case SIGALRM = 14
-    case SIGTERM = 15
-    case SIGSTKFLT = 16
-    case SIGCHLD = 17
-    case SIGCONT = 18
-    case SIGSTOP = 19
-    case SIGTSTP = 20
-    case SIGTTIN = 21
-    case SIGTTOU = 22
-    case SIGURG = 23
-    case SIGXCPU = 24
-    case SIGXFSZ = 25
-    case SIGVTALRM = 26
-    case SIGPROF = 27
-    case SIGWINCH = 28
-    case SIGIO = 29
-    case SIGPWR = 30
-    case SIGSYS = 31
+    case HUP
+    case INT
+    case QUIT
+    case ILL
+    case TRAP
+    case ABRT
+    case BUS
+    case FPE
+    case KILL
+    case USR1
+    case SEGV
+    case USR2
+    case PIPE
+    case ALRM
+    case TERM
+    case STKFLT
+    case CHLD
+    case CONT
+    case STOP
+    case TSTP
+    case TTIN
+    case TTOU
+    case URG
+    case XCPU
+    case XFSZ
+    case VTALRM
+    case PROF
+    case WINCH
+    case IO
+    case PWR
+    case SYS
+
+    public var rawValue: CInt {
+        switch self {
+            case .HUP:
+                return SIGHUP
+            case .INT:
+                return SIGINT
+            case .QUIT:
+                return SIGQUIT
+            case .ILL:
+                return SIGILL
+            case .TRAP:
+                return SIGTRAP
+            case .ABRT:
+                return SIGABRT
+            case .BUS:
+                return SIGBUS
+            case .FPE:
+                return SIGFPE
+            case .KILL:
+                return SIGKILL
+            case .USR1:
+                return SIGUSR1
+            case .SEGV:
+                return SIGSEGV
+            case .USR2:
+                return SIGUSR2
+            case .PIPE:
+                return SIGPIPE
+            case .ALRM:
+                return SIGALRM
+            case .TERM:
+                return SIGTERM
+            case .STKFLT:
+                return SIGSTKFLT
+            case .CHLD:
+                return SIGCHLD
+            case .CONT:
+                return SIGCONT
+            case .STOP:
+                return SIGSTOP
+            case .TSTP:
+                return SIGTSTP
+            case .TTIN:
+                return SIGTTIN
+            case .TTOU:
+                return SIGTTOU
+            case .URG:
+                return SIGURG
+            case .XCPU:
+                return SIGXCPU
+            case .XFSZ:
+                return SIGXFSZ
+            case .VTALRM:
+                return SIGVTALRM
+            case .PROF:
+                return SIGPROF
+            case .WINCH:
+                return SIGWINCH
+            case .IO:
+                return SIGIO
+            case .PWR:
+                return SIGPWR
+            case .SYS:
+                return SIGSYS
+        }
+    }
 }
 
 extension Signal: CustomStringConvertible {
