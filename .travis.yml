@@ -18,4 +18,4 @@ cache:
         - $HOME/.swiftenv
 
 script:
-  - swift test
+  - swift build
