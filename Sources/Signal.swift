@@ -176,7 +176,7 @@ public enum Signal {
         }
     }
 
-    public var rawValue: CInt {
+    public var number: CInt {
         switch self {
             case .HUP:
                 return SIGHUP
@@ -247,37 +247,37 @@ public enum Signal {
 }
 
 extension Signal {
-    public var signalName: String {
-        return String(cString: strsignal(rawValue))
+    public var name: String {
+        return String(cString: strsignal(number))
     }
 
     public var rawDescription: String {
-        if (rawValue >= Signal.SIGRTMIN) {
-            return ".RT(\(rawValue - (Signal.SIGRTMIN - 1)))"
+        if (number >= Signal.SIGRTMIN) {
+            return ".RT(\(number - (Signal.SIGRTMIN - 1)))"
         }
 
-        return _rawDescription[Int(rawValue - 1)]
+        return _rawDescription[Int(number - 1)]
     }
 
     public var rawOSDescription: String {
-        if (rawValue == Signal.SIGRTMIN) {
+        if (number == Signal.SIGRTMIN) {
             return _SIGRTMIN
-        } else if (rawValue > Signal.SIGRTMIN) {
-            return "\(_SIGRTMIN) + \((rawValue - 1) - (Signal.SIGRTMIN - 1))"
+        } else if (number > Signal.SIGRTMIN) {
+            return "\(_SIGRTMIN) + \((number - 1) - (Signal.SIGRTMIN - 1))"
         }
 
-        return _rawOSDescription[Int(rawValue - 1)]
+        return _rawOSDescription[Int(number - 1)]
     }
 }
 
 extension Signal: CustomStringConvertible {
     public var description: String {
-        return "\(signalName) (\(rawDescription))"
+        return "\(name) (\(rawDescription))"
     }
 }
 
 extension Signal: CustomDebugStringConvertible {
     public var debugDescription: String {
-        return "\(signalName) (#\(rawValue)/\(rawOSDescription)/\(rawDescription))"
+        return "\(name) (#\(number)/\(rawOSDescription)/\(rawDescription))"
     }
 }

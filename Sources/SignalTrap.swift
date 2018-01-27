@@ -32,12 +32,12 @@ public func trap(signal: Signal, action: SigactionHandler) throws {
 
     signalAction.__sigaction_handler = unsafeBitCast(action, to: sigaction.__Unnamed_union___sigaction_handler.self)
 
-    sigaction(signal.rawValue, &signalAction, nil)
+    sigaction(signal.number, &signalAction, nil)
 #else
     var signalAction = sigaction(__sigaction_u: unsafeBitCast(action, to: __sigaction_u.self), sa_mask: 0, sa_flags: 0)
             
     withUnsafePointer(to: &signalAction) { actionPointer in
-        sigaction(signal.rawValue, actionPointer, nil)
+        sigaction(signal.number, actionPointer, nil)
     }
 #endif
 
@@ -60,9 +60,9 @@ public func trap(handlers: Array<Signals>) throws {
 
 public func raise(signal: Signal) throws {
 #if os(Linux)
-    Glibc.raise(signal.rawValue)
+    Glibc.raise(signal.number)
 #else
-    Darwin.raise(signal.rawValue)
+    Darwin.raise(signal.number)
 #endif
 
     guard (errno == 0) else {
@@ -78,9 +78,9 @@ public func raise(signals: Array<Signal>) throws {
 
 public func ignore(signal: Signal) throws {
 #if os(Linux)
-    Glibc.signal(signal.rawValue, SIG_IGN)
+    Glibc.signal(signal.number, SIG_IGN)
 #else
-    Darwin.signal(signal.rawValue, SIG_IGN)
+    Darwin.signal(signal.number, SIG_IGN)
 #endif
 
     guard (errno == 0) else {
@@ -96,9 +96,9 @@ public func ignore(signals: Array<Signal>) throws {
 
 public func restore(signal: Signal) throws {
 #if os(Linux)
-    Glibc.signal(signal.rawValue, SIG_DFL)
+    Glibc.signal(signal.number, SIG_DFL)
 #else
-    Darwin.signal(signal.rawValue, SIG_DFL)
+    Darwin.signal(signal.number, SIG_DFL)
 #endif
 
     guard (errno == 0) else {
