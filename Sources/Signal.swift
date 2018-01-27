@@ -1,7 +1,7 @@
 /*
     Signal.swift
 
-    Copyright (c) 2016 Stephen Whittle  All rights reserved.
+    Copyright (c) 2016, 2018 Stephen Whittle  All rights reserved.
 
     Permission is hereby granted, free of charge, to any person obtaining a copy
     of this software and associated documentation files (the "Software"),
@@ -22,8 +22,29 @@
 
 #if os(Linux)
 import Glibc
+#else
+import Darwin
+#endif
 
-public enum Signal: CInt {
+fileprivate var _rawOSDescription = Array<String>(arrayLiteral: "SIGHUP", "SIGINT", "SIGQUIT", "SIGILL", "SIGTRAP",
+                                                                "SIGABRT", "SIGBUS", "SIGFPE", "SIGKILL", "SIGUSR1",
+                                                                "SIGSEGV", "SIGUSR2", "SIGPIPE", "SIGALRM", "SIGTERM",
+                                                                "SIGSTKFLT", "SIGCHLD", "SIGCONT", "SIGSTOP", "SIGTSTP",
+                                                                "SIGTTIN", "SIGTTOU", "SIGURG", "SIGXCPU", "SIGXFSZ",
+                                                                "SIGVTALRM", "SIGPROF", "SIGWINCH", "SIGIO", "SIGPWR",
+                                                                "SIGSYS")
+
+fileprivate let _SIGRTMIN = "SIGMINRT"
+
+fileprivate var _rawDescription = Array<String>(arrayLiteral: ".HUP", ".INT", ".QUIT", ".ILL", ".TRAP",
+                                                              ".ABRT", ".BUS", ".FPE", ".KILL", ".USR1",
+                                                              ".SEGV", ".USR2", ".PIPE", ".ALRM", ".TERM",
+                                                              ".STKFLT", ".CHLD", ".CONT", ".STOP", ".TSTP",
+                                                              ".TTIN", ".TTOU", ".URG", ".XCPU", ".XFSZ",
+                                                              ".VTALRM", ".PROF", ".WINCH", ".IO", ".PWR",
+                                                              ".SYS")
+
+public enum Signal {
     case HUP
     case INT
     case QUIT
@@ -55,6 +76,105 @@ public enum Signal: CInt {
     case IO
     case PWR
     case SYS
+    case RT(Int)
+
+    public static let allSignals = Array(arrayLiteral: HUP, INT, QUIT, ILL, TRAP,
+                                                       ABRT, BUS, FPE, /* KILL, */ USR1,
+                                                       SEGV, USR2, PIPE, ALRM, TERM,
+                                                       STKFLT, CHLD, CONT, /* STOP, */ TSTP,
+                                                       TTIN, TTOU, URG, XCPU, XFSZ,
+                                                       VTALRM, PROF, WINCH, IO, PWR,
+                                                       SYS)
+
+#if os(Linux)
+/*
+    __SIGRTMIN returns 32 which is an invalid signal.
+    $ uname -a
+    Linux fluffy-laptop 4.10.0-38-generic #42~16.04.1-Ubuntu SMP Tue Oct 10 16:32:20 UTC 2017 x86_64 x86_64 x86_64 GNU/Linux
+*/
+    public static let SIGRTMIN: CInt = 34
+    public static let SIGRTMAX: CInt = 64
+#else
+    // Hoping these are correct on macOS etc. as i have no way of testing (except travis maybe?).
+    public static let SIGRTMIN = CInt(__SIGRTMIN)
+    public static let SIGRTMAX = CInt(__SIGRTMAX)
+#endif
+
+    public static let minRealTimeSignal: Int = 1
+    public static let maxRealTimeSignal = Int(SIGRTMAX - SIGRTMIN)
+
+    public init(rawValue: CInt) {
+        switch rawValue {
+            case SIGHUP:
+                self = .HUP
+            case SIGINT:
+                self = .INT
+            case SIGQUIT:
+                self = .QUIT
+            case SIGILL:
+                self = .ILL
+            case SIGTRAP:
+                self = .TRAP
+            case SIGABRT:
+                self = .ABRT
+            case SIGBUS:
+                self = .BUS
+            case SIGFPE:
+                self = .FPE
+            case SIGKILL:
+                self = .KILL
+            case SIGUSR1:
+                self = .USR1
+            case SIGSEGV:
+                self = .SEGV
+            case SIGUSR2:
+                self = .USR2
+            case SIGPIPE:
+                self = .PIPE
+            case SIGALRM:
+                self = .ALRM
+            case SIGTERM:
+                self = .TERM
+            case SIGSTKFLT:
+                self = .STKFLT
+            case SIGCHLD:
+                self = .CHLD
+            case SIGCONT:
+                self = .CONT
+            case SIGSTOP:
+                self = .STOP
+            case SIGTSTP:
+                self = .TSTP
+            case SIGTTIN:
+                self = .TTIN
+            case SIGTTOU:
+                self = .TTOU
+            case SIGURG:
+                self = .URG
+            case SIGXCPU:
+                self = .XCPU
+            case SIGXFSZ:
+                self = .XFSZ
+            case SIGVTALRM:
+                self = .VTALRM
+            case SIGPROF:
+                self = .PROF
+            case SIGWINCH:
+                self = .WINCH
+            case SIGIO:
+                self = .IO
+            case SIGPWR:
+                self = .PWR
+            case SIGSYS:
+                self = .SYS
+            default:
+                guard (rawValue >= Signal.SIGRTMIN && rawValue <= Signal.SIGRTMAX) else {
+                    fatalError("Unknown signal #\(rawValue)")
+                }
+
+                self = .RT(Int(rawValue - (Signal.SIGRTMIN - 1)))
+        }
+    }
 
     public var rawValue: CInt {
         switch self {
@@ -120,23 +240,44 @@ public enum Signal: CInt {
                 return SIGPWR
             case .SYS:
                 return SIGSYS
+            case .RT(let signal):
+                return (Signal.SIGRTMIN - 1) + CInt(signal)
         }
+    }
+}
+
+extension Signal {
+    public var signalName: String {
+        return String(cString: strsignal(rawValue))
+    }
+
+    public var rawDescription: String {
+        if (rawValue >= Signal.SIGRTMIN) {
+            return ".RT(\(rawValue - (Signal.SIGRTMIN - 1)))"
+        }
+
+        return _rawDescription[Int(rawValue - 1)]
+    }
+
+    public var rawOSDescription: String {
+        if (rawValue == Signal.SIGRTMIN) {
+            return _SIGRTMIN
+        } else if (rawValue > Signal.SIGRTMIN) {
+            return "\(_SIGRTMIN) + \((rawValue - 1) - (Signal.SIGRTMIN - 1))"
+        }
+
+        return _rawOSDescription[Int(rawValue - 1)]
     }
 }
 
 extension Signal: CustomStringConvertible {
     public var description: String {
-        func signalCode() -> String {
-            return " (#" + String(self.rawValue) + ")"
-        }
-
-        let signalName = String(cString: strsignal(self.rawValue))
-
-        if (!signalName.isEmpty) {
-            return signalName + signalCode()
-        }
-
-        return signalCode()
+        return "\(signalName) (\(rawDescription))"
     }
 }
-#endif
+
+extension Signal: CustomDebugStringConvertible {
+    public var debugDescription: String {
+        return "\(signalName) (#\(rawValue)/\(rawOSDescription)/\(rawDescription))"
+    }
+}

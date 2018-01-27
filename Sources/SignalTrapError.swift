@@ -1,7 +1,7 @@
 /*
-    Package.swift
+    SignaltrapError.swift
 
-    Copyright (c) 2016, 2018 Stephen Whittle  All rights reserved.
+    Copyright (c) 2018 Stephen Whittle  All rights reserved.
 
     Permission is hereby granted, free of charge, to any person obtaining a copy
     of this software and associated documentation files (the "Software"),
@@ -20,20 +20,32 @@
     IN THE SOFTWARE.
 */
 
-import PackageDescription
-
-#if os(Linux) || os(macOS) || os(iOS) || os(tvOS) || os(watchOS)
-let package = Package(
-    name: "SignalTrap"
-)
-
-let staticLibrary = Product(
-    name:    "SignalTrap",
-    type:    .Library(.Static),
-    modules: ["SignalTrap"]
-)
-
-products.append(staticLibrary)
+#if os(Linux)
+import Glibc
 #else
-fatalError("Unsupported OS")
+import Darwin
 #endif
+
+public enum SignalTrapError: Error {
+    case Trap(code: CInt, signal: Signal)
+    case Raise(code: CInt, signal: Signal)
+    case Ignore(code: CInt, signal: Signal)
+    case Restore(code: CInt, signal: Signal)
+}
+
+extension SignalTrapError: CustomStringConvertible {
+    public var description: String {
+        func errorString(_ code: CInt, _ signal: Signal) -> String {
+            return "signal is \(signal.description) with " + String(cString: strerror(code)) + " (#\(code))"
+        }
+
+        switch self {
+            case .Trap(let code, let signal):
+                return "sigaction() failed: " + errorString(code, signal)
+            case .Raise(let code, let signal):
+                return "raise() failed: " + errorString(code, signal)
+            case .Ignore(let code, let signal), .Restore(let code, let signal):
+                return "signal() failed: " + errorString(code, signal)
+        }
+    }
+}

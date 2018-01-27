@@ -2,3 +2,6 @@
 /.build
 /Packages
 /*.xcodeproj
+examples/all-signals
+examples/sigrtmax
+examples/sigrtmin

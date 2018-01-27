@@ -1,7 +1,7 @@
 /*
-    Signaltrap.swift
+    all-signals.swift
 
-    Copyright (c) 2016 Stephen Whittle  All rights reserved.
+    Copyright (c) 2018 Stephen Whittle  All rights reserved.
 
     Permission is hereby granted, free of charge, to any person obtaining a copy
     of this software and associated documentation files (the "Software"),
@@ -20,14 +20,40 @@
     IN THE SOFTWARE.
 */
 
-#if os(Linux)
-import Glibc
+import Foundation
+import SignalTrap
 
-public func trap(_ signal: Signal, action: SigactionHandler) {
-    var signalAction = sigaction()
+var count = 0
+var started: TimeInterval = 0
 
-    signalAction.__sigaction_handler = unsafeBitCast(action, to: sigaction.__Unnamed_union___sigaction_handler.self)
+do {
+    try trap(signals: Signal.allSignals) { signal in
+        let runtime = Date().timeIntervalSince1970 - started
 
-    sigaction(signal.rawValue, &signalAction, nil)
+        print("received signal: \(Signal(rawValue: signal).description)")
+        print("count          : \(count)")
+        print("runtime        : \(runtime) seconds")
+
+        exit(EXIT_SUCCESS)
+    }
+
+    started = Date().timeIntervalSince1970
+
+    alarm(2) // Wait 2 seconds for the program to be killed
+
+    while true {
+        print("timestamp: \(Date().timeIntervalSince1970)")
+        count += 1
+              
+        if (count >= 100000) {
+            print("sending signal .TERM")
+            try raise(signal: .TERM)
+        }
+    }
+} catch let error as SignalTrapError {
+    print(error)
+} catch {
+    print("an unexpected error '\(error)' has occured in the library libSignalTrap.")
 }
-#endif
+
+// Or stop it yourself with cntrl+C
