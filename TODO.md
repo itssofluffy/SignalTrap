@@ -1,0 +1,1 @@
+- Need to determine a reliable real-time signal range.

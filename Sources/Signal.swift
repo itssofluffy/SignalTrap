@@ -27,131 +27,131 @@ import Darwin
 #endif
 
 #if os(Linux)
-fileprivate let _rawOSDescription: Dictionary<CInt, String> = [SIGHUP    : "SIGHUP",
-                                                               SIGINT    : "SIGINT",
-                                                               SIGQUIT   : "SIGQUIT",
-                                                               SIGILL    : "SIGILL",
-                                                               SIGTRAP   : "SIGTRAP",
-                                                               SIGABRT   : "SIGABRT",
-                                                               SIGBUS    : "SIGBUS",
-                                                               SIGFPE    : "SIGFPE",
-                                                               SIGKILL   : "SIGKILL",
-                                                               SIGUSR1   : "SIGUSR1",
-                                                               SIGSEGV   : "SIGSEGV",
-                                                               SIGUSR2   : "SIGUSR2",
-                                                               SIGPIPE   : "SIGPIPE",
-                                                               SIGALRM   : "SIGALRM",
-                                                               SIGTERM   : "SIGTERM",
-                                                               SIGSTKFLT : "SIGSTKFLT",
-                                                               SIGCHLD   : "SIGCHLD",
-                                                               SIGCONT   : "SIGCONT",
-                                                               SIGSTOP   : "SIGSTOP",
-                                                               SIGTSTP   : "SIGTSTP",
-                                                               SIGTTIN   : "SIGTTIN",
-                                                               SIGTTOU   : "SIGTTOU",
-                                                               SIGURG    : "SIGURG",
-                                                               SIGXCPU   : "SIGXCPU",
-                                                               SIGXFSZ   : "SIGXFSZ",
-                                                               SIGVTALRM : "SIGVTALRM",
-                                                               SIGPROF   : "SIGPROF",
-                                                               SIGWINCH  : "SIGWINCH",
-                                                               SIGIO     : "SIGIO",
-                                                               SIGPWR    : "SIGPWR",
-                                                               SIGSYS    : "SIGSYS"]
+fileprivate let _enumOSDescription: Dictionary<CInt, String> = [SIGHUP    : "SIGHUP",
+                                                                SIGINT    : "SIGINT",
+                                                                SIGQUIT   : "SIGQUIT",
+                                                                SIGILL    : "SIGILL",
+                                                                SIGTRAP   : "SIGTRAP",
+                                                                SIGABRT   : "SIGABRT",
+                                                                SIGBUS    : "SIGBUS",
+                                                                SIGFPE    : "SIGFPE",
+                                                                SIGKILL   : "SIGKILL",
+                                                                SIGUSR1   : "SIGUSR1",
+                                                                SIGSEGV   : "SIGSEGV",
+                                                                SIGUSR2   : "SIGUSR2",
+                                                                SIGPIPE   : "SIGPIPE",
+                                                                SIGALRM   : "SIGALRM",
+                                                                SIGTERM   : "SIGTERM",
+                                                                SIGSTKFLT : "SIGSTKFLT",
+                                                                SIGCHLD   : "SIGCHLD",
+                                                                SIGCONT   : "SIGCONT",
+                                                                SIGSTOP   : "SIGSTOP",
+                                                                SIGTSTP   : "SIGTSTP",
+                                                                SIGTTIN   : "SIGTTIN",
+                                                                SIGTTOU   : "SIGTTOU",
+                                                                SIGURG    : "SIGURG",
+                                                                SIGXCPU   : "SIGXCPU",
+                                                                SIGXFSZ   : "SIGXFSZ",
+                                                                SIGVTALRM : "SIGVTALRM",
+                                                                SIGPROF   : "SIGPROF",
+                                                                SIGWINCH  : "SIGWINCH",
+                                                                SIGIO     : "SIGIO",
+                                                                SIGPWR    : "SIGPWR",
+                                                                SIGSYS    : "SIGSYS"]
 
 fileprivate let _SIGRTMIN = "SIGMINRT"
 
-fileprivate let _rawDescription: Dictionary<CInt, String> = [SIGHUP    : ".HUP",
-                                                             SIGINT    : ".INT",
-                                                             SIGQUIT   : ".QUIT",
-                                                             SIGILL    : ".ILL",
-                                                             SIGTRAP   : ".TRAP",
-                                                             SIGABRT   : ".ABRT",
-                                                             SIGBUS    : ".BUS",
-                                                             SIGFPE    : ".FPE",
-                                                             SIGKILL   : ".KILL",
-                                                             SIGUSR1   : ".USR1",
-                                                             SIGSEGV   : ".SEGV",
-                                                             SIGUSR2   : ".USR2",
-                                                             SIGPIPE   : ".PIPE",
-                                                             SIGALRM   : ".ALRM",
-                                                             SIGTERM   : ".TERM",
-                                                             SIGSTKFLT : ".STKFLT",
-                                                             SIGCHLD   : ".CHLD",
-                                                             SIGCONT   : ".CONT",
-                                                             SIGSTOP   : ".STOP",
-                                                             SIGTSTP   : ".TSTP",
-                                                             SIGTTIN   : ".TTIN",
-                                                             SIGTTOU   : ".TTOU",
-                                                             SIGURG    : ".URG",
-                                                             SIGXCPU   : ".XCPU",
-                                                             SIGXFSZ   : ".XFSZ",
-                                                             SIGVTALRM : ".VTALRM",
-                                                             SIGPROF   : ".PROF",
-                                                             SIGWINCH  : ".WINCH",
-                                                             SIGIO     : ".IO",
-                                                             SIGPWR    : ".PWR",
-                                                             SIGSYS    : ".SYS"]
+fileprivate let _enumDescription: Dictionary<CInt, String> = [SIGHUP    : ".HUP",
+                                                              SIGINT    : ".INT",
+                                                              SIGQUIT   : ".QUIT",
+                                                              SIGILL    : ".ILL",
+                                                              SIGTRAP   : ".TRAP",
+                                                              SIGABRT   : ".ABRT",
+                                                              SIGBUS    : ".BUS",
+                                                              SIGFPE    : ".FPE",
+                                                              SIGKILL   : ".KILL",
+                                                              SIGUSR1   : ".USR1",
+                                                              SIGSEGV   : ".SEGV",
+                                                              SIGUSR2   : ".USR2",
+                                                              SIGPIPE   : ".PIPE",
+                                                              SIGALRM   : ".ALRM",
+                                                              SIGTERM   : ".TERM",
+                                                              SIGSTKFLT : ".STKFLT",
+                                                              SIGCHLD   : ".CHLD",
+                                                              SIGCONT   : ".CONT",
+                                                              SIGSTOP   : ".STOP",
+                                                              SIGTSTP   : ".TSTP",
+                                                              SIGTTIN   : ".TTIN",
+                                                              SIGTTOU   : ".TTOU",
+                                                              SIGURG    : ".URG",
+                                                              SIGXCPU   : ".XCPU",
+                                                              SIGXFSZ   : ".XFSZ",
+                                                              SIGVTALRM : ".VTALRM",
+                                                              SIGPROF   : ".PROF",
+                                                              SIGWINCH  : ".WINCH",
+                                                              SIGIO     : ".IO",
+                                                              SIGPWR    : ".PWR",
+                                                              SIGSYS    : ".SYS"]
 #else
-fileprivate let _rawOSDescription: Dictionary<CInt, String> = [SIGHUP    : "SIGHUP",
-                                                               SIGINT    : "SIGINT",
-                                                               SIGQUIT   : "SIGQUIT",
-                                                               SIGILL    : "SIGILL",
-                                                               SIGTRAP   : "SIGTRAP",
-                                                               SIGABRT   : "SIGABRT",
-                                                               SIGBUS    : "SIGBUS",
-                                                               SIGFPE    : "SIGFPE",
-                                                               SIGKILL   : "SIGKILL",
-                                                               SIGUSR1   : "SIGUSR1",
-                                                               SIGSEGV   : "SIGSEGV",
-                                                               SIGUSR2   : "SIGUSR2",
-                                                               SIGPIPE   : "SIGPIPE",
-                                                               SIGALRM   : "SIGALRM",
-                                                               SIGTERM   : "SIGTERM",
-                                                               SIGCHLD   : "SIGCHLD",
-                                                               SIGCONT   : "SIGCONT",
-                                                               SIGSTOP   : "SIGSTOP",
-                                                               SIGTSTP   : "SIGTSTP",
-                                                               SIGTTIN   : "SIGTTIN",
-                                                               SIGTTOU   : "SIGTTOU",
-                                                               SIGURG    : "SIGURG",
-                                                               SIGXCPU   : "SIGXCPU",
-                                                               SIGXFSZ   : "SIGXFSZ",
-                                                               SIGVTALRM : "SIGVTALRM",
-                                                               SIGPROF   : "SIGPROF",
-                                                               SIGWINCH  : "SIGWINCH",
-                                                               SIGIO     : "SIGIO",
-                                                               SIGSYS    : "SIGSYS"]
+fileprivate let _enumOSDescription: Dictionary<CInt, String> = [SIGHUP    : "SIGHUP",
+                                                                SIGINT    : "SIGINT",
+                                                                SIGQUIT   : "SIGQUIT",
+                                                                SIGILL    : "SIGILL",
+                                                                SIGTRAP   : "SIGTRAP",
+                                                                SIGABRT   : "SIGABRT",
+                                                                SIGBUS    : "SIGBUS",
+                                                                SIGFPE    : "SIGFPE",
+                                                                SIGKILL   : "SIGKILL",
+                                                                SIGUSR1   : "SIGUSR1",
+                                                                SIGSEGV   : "SIGSEGV",
+                                                                SIGUSR2   : "SIGUSR2",
+                                                                SIGPIPE   : "SIGPIPE",
+                                                                SIGALRM   : "SIGALRM",
+                                                                SIGTERM   : "SIGTERM",
+                                                                SIGCHLD   : "SIGCHLD",
+                                                                SIGCONT   : "SIGCONT",
+                                                                SIGSTOP   : "SIGSTOP",
+                                                                SIGTSTP   : "SIGTSTP",
+                                                                SIGTTIN   : "SIGTTIN",
+                                                                SIGTTOU   : "SIGTTOU",
+                                                                SIGURG    : "SIGURG",
+                                                                SIGXCPU   : "SIGXCPU",
+                                                                SIGXFSZ   : "SIGXFSZ",
+                                                                SIGVTALRM : "SIGVTALRM",
+                                                                SIGPROF   : "SIGPROF",
+                                                                SIGWINCH  : "SIGWINCH",
+                                                                SIGIO     : "SIGIO",
+                                                                SIGSYS    : "SIGSYS"]
 
-fileprivate let _rawDescription: Dictionary<CInt, String> = [SIGHUP    : ".HUP",
-                                                             SIGINT    : ".INT",
-                                                             SIGQUIT   : ".QUIT",
-                                                             SIGILL    : ".ILL",
-                                                             SIGTRAP   : ".TRAP",
-                                                             SIGABRT   : ".ABRT",
-                                                             SIGBUS    : ".BUS",
-                                                             SIGFPE    : ".FPE",
-                                                             SIGKILL   : ".KILL",
-                                                             SIGUSR1   : ".USR1",
-                                                             SIGSEGV   : ".SEGV",
-                                                             SIGUSR2   : ".USR2",
-                                                             SIGPIPE   : ".PIPE",
-                                                             SIGALRM   : ".ALRM",
-                                                             SIGTERM   : ".TERM",
-                                                             SIGCHLD   : ".CHLD",
-                                                             SIGCONT   : ".CONT",
-                                                             SIGSTOP   : ".STOP",
-                                                             SIGTSTP   : ".TSTP",
-                                                             SIGTTIN   : ".TTIN",
-                                                             SIGTTOU   : ".TTOU",
-                                                             SIGURG    : ".URG",
-                                                             SIGXCPU   : ".XCPU",
-                                                             SIGXFSZ   : ".XFSZ",
-                                                             SIGVTALRM : ".VTALRM",
-                                                             SIGPROF   : ".PROF",
-                                                             SIGWINCH  : ".WINCH",
-                                                             SIGIO     : ".IO",
-                                                             SIGSYS    : ".SYS"]
+fileprivate let _enumDescription: Dictionary<CInt, String> = [SIGHUP    : ".HUP",
+                                                              SIGINT    : ".INT",
+                                                              SIGQUIT   : ".QUIT",
+                                                              SIGILL    : ".ILL",
+                                                              SIGTRAP   : ".TRAP",
+                                                              SIGABRT   : ".ABRT",
+                                                              SIGBUS    : ".BUS",
+                                                              SIGFPE    : ".FPE",
+                                                              SIGKILL   : ".KILL",
+                                                              SIGUSR1   : ".USR1",
+                                                              SIGSEGV   : ".SEGV",
+                                                              SIGUSR2   : ".USR2",
+                                                              SIGPIPE   : ".PIPE",
+                                                              SIGALRM   : ".ALRM",
+                                                              SIGTERM   : ".TERM",
+                                                              SIGCHLD   : ".CHLD",
+                                                              SIGCONT   : ".CONT",
+                                                              SIGSTOP   : ".STOP",
+                                                              SIGTSTP   : ".TSTP",
+                                                              SIGTTIN   : ".TTIN",
+                                                              SIGTTOU   : ".TTOU",
+                                                              SIGURG    : ".URG",
+                                                              SIGXCPU   : ".XCPU",
+                                                              SIGXFSZ   : ".XFSZ",
+                                                              SIGVTALRM : ".VTALRM",
+                                                              SIGPROF   : ".PROF",
+                                                              SIGWINCH  : ".WINCH",
+                                                              SIGIO     : ".IO",
+                                                              SIGSYS    : ".SYS"]
 #endif
 
 public enum Signal {
@@ -214,9 +214,16 @@ public enum Signal {
 
 #if os(Linux)
 /*
-    __SIGRTMIN returns 32 which is an invalid signal.
-    $ uname -a
-    Linux fluffy-laptop 4.10.0-38-generic #42~16.04.1-Ubuntu SMP Tue Oct 10 16:32:20 UTC 2017 x86_64 x86_64 x86_64 GNU/Linux
+    __SIGRTMIN returns 32 which is an invalid signal and __SIGRTMAX returns 64.
+
+    $ uname --all
+    Linux ############# 4.10.0-38-generic #42~16.04.1-Ubuntu SMP Tue Oct 10 16:32:20 UTC 2017 x86_64 x86_64 x86_64 GNU/Linux
+    $ swift --version
+    Swift version 4.0.3 (swift-4.0.3-RELEASE)
+    Target: x86_64-unknown-linux-gnu
+
+    For this reason as we can't determine a reliable real-time signal range
+    this feature is switched off for none linux systems.
 */
     public static let SIGRTMIN: CInt = 34
     public static let SIGRTMAX: CInt = 64
@@ -501,17 +508,17 @@ extension Signal {
         return String(cString: strsignal(number))
     }
 
-    public var rawDescription: String {
+    public var enumDescription: String {
 #if os(Linux)
         if (number >= Signal.SIGRTMIN) {
             return ".RT(\(number - (Signal.SIGRTMIN - 1)))"
         }
 #endif
 
-        return _rawDescription[number]!
+        return _enumDescription[number]!
     }
 
-    public var rawOSDescription: String {
+    public var enumOSDescription: String {
 #if os(Linux)
         if (number == Signal.SIGRTMIN) {
             return _SIGRTMIN
@@ -520,18 +527,18 @@ extension Signal {
         }
 #endif
 
-        return _rawOSDescription[number]!
+        return _enumOSDescription[number]!
     }
 }
 
 extension Signal: CustomStringConvertible {
     public var description: String {
-        return "\(name) (\(rawDescription))"
+        return "\(name) (\(enumDescription))"
     }
 }
 
 extension Signal: CustomDebugStringConvertible {
     public var debugDescription: String {
-        return "\(name) (#\(number)/\(rawOSDescription)/\(rawDescription))"
+        return "\(name) (#\(number)/\(enumOSDescription)/\(enumDescription))"
     }
 }
