@@ -36,7 +36,7 @@ public func trap(signal: Signal, action: SigactionHandler) throws {
 #else
     var signalAction = sigaction(__sigaction_u: unsafeBitCast(action, to: __sigaction_u.self), sa_mask: 0, sa_flags: 0)
             
-    withUnsafePointer(to: &signalAction) { actionPointer in
+    _ = withUnsafePointer(to: &signalAction) { actionPointer in
         sigaction(signal.number, actionPointer, nil)
     }
 #endif

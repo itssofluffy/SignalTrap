@@ -20,6 +20,7 @@
     IN THE SOFTWARE.
 */
 
+#if os(Linux)
 import Foundation
 import SignalTrap
 
@@ -61,3 +62,6 @@ do {
 }
 
 // Or stop it yourself with cntrl+C
+#else
+fatalError("Unsupported Function in OS")
+#endif

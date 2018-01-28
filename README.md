@@ -7,7 +7,7 @@
 ![Linux][linux-badge]
 [![License][mit-badge]][mit-url]
 
-A **Swift-3/4** implementation of signal trapping for Linux (untested on Mac etc.) with support for real-time signals.
+A **Swift-3/4** implementation of signal trapping (untested on Mac etc.) with support for real-time signals (Linux only).
 
 ## Usage
 
