@@ -26,23 +26,71 @@ import Glibc
 import Darwin
 #endif
 
-fileprivate var _rawOSDescription = Array<String>(arrayLiteral: "SIGHUP", "SIGINT", "SIGQUIT", "SIGILL", "SIGTRAP",
-                                                                "SIGABRT", "SIGBUS", "SIGFPE", "SIGKILL", "SIGUSR1",
-                                                                "SIGSEGV", "SIGUSR2", "SIGPIPE", "SIGALRM", "SIGTERM",
-                                                                "SIGSTKFLT", "SIGCHLD", "SIGCONT", "SIGSTOP", "SIGTSTP",
-                                                                "SIGTTIN", "SIGTTOU", "SIGURG", "SIGXCPU", "SIGXFSZ",
-                                                                "SIGVTALRM", "SIGPROF", "SIGWINCH", "SIGIO", "SIGPWR",
-                                                                "SIGSYS")
+fileprivate let _rawOSDescription: Dictionary<CInt, String> = [SIGHUP    : "SIGHUP",
+                                                               SIGINT    : "SIGINT",
+                                                               SIGQUIT   : "SIGQUIT",
+                                                               SIGILL    : "SIGILL",
+                                                               SIGTRAP   : "SIGTRAP",
+                                                               SIGABRT   : "SIGABRT",
+                                                               SIGBUS    : "SIGBUS",
+                                                               SIGFPE    : "SIGFPE",
+                                                               SIGKILL   : "SIGKILL",
+                                                               SIGUSR1   : "SIGUSR1",
+                                                               SIGSEGV   : "SIGSEGV",
+                                                               SIGUSR2   : "SIGUSR2",
+                                                               SIGPIPE   : "SIGPIPE",
+                                                               SIGALRM   : "SIGALRM",
+                                                               SIGTERM   : "SIGTERM",
+                                                               SIGSTKFLT : "SIGSTKFLT",
+                                                               SIGCHLD   : "SIGCHLD",
+                                                               SIGCONT   : "SIGCONT",
+                                                               SIGSTOP   : "SIGSTOP",
+                                                               SIGTSTP   : "SIGTSTP",
+                                                               SIGTTIN   : "SIGTTIN",
+                                                               SIGTTOU   : "SIGTTOU",
+                                                               SIGURG    : "SIGURG",
+                                                               SIGXCPU   : "SIGXCPU",
+                                                               SIGXFSZ   : "SIGXFSZ",
+                                                               SIGVTALRM : "SIGVTALRM",
+                                                               SIGPROF   : "SIGPROF",
+                                                               SIGWINCH  : "SIGWINCH",
+                                                               SIGIO     : "SIGIO",
+                                                               SIGPWR    : "SIGPWR",
+                                                               SIGSYS    : "SIGSYS"]
 
 fileprivate let _SIGRTMIN = "SIGMINRT"
 
-fileprivate var _rawDescription = Array<String>(arrayLiteral: ".HUP", ".INT", ".QUIT", ".ILL", ".TRAP",
-                                                              ".ABRT", ".BUS", ".FPE", ".KILL", ".USR1",
-                                                              ".SEGV", ".USR2", ".PIPE", ".ALRM", ".TERM",
-                                                              ".STKFLT", ".CHLD", ".CONT", ".STOP", ".TSTP",
-                                                              ".TTIN", ".TTOU", ".URG", ".XCPU", ".XFSZ",
-                                                              ".VTALRM", ".PROF", ".WINCH", ".IO", ".PWR",
-                                                              ".SYS")
+fileprivate let _rawDescription: Dictionary<CInt, String> = [SIGHUP    : ".HUP",
+                                                             SIGINT    : ".INT",
+                                                             SIGQUIT   : ".QUIT",
+                                                             SIGILL    : ".ILL",
+                                                             SIGTRAP   : ".TRAP",
+                                                             SIGABRT   : ".ABRT",
+                                                             SIGBUS    : ".BUS",
+                                                             SIGFPE    : ".FPE",
+                                                             SIGKILL   : ".KILL",
+                                                             SIGUSR1   : ".USR1",
+                                                             SIGSEGV   : ".SEGV",
+                                                             SIGUSR2   : ".USR2",
+                                                             SIGPIPE   : ".PIPE",
+                                                             SIGALRM   : ".ALRM",
+                                                             SIGTERM   : ".TERM",
+                                                             SIGSTKFLT : ".STKFLT",
+                                                             SIGCHLD   : ".CHLD",
+                                                             SIGCONT   : ".CONT",
+                                                             SIGSTOP   : ".STOP",
+                                                             SIGTSTP   : ".TSTP",
+                                                             SIGTTIN   : ".TTIN",
+                                                             SIGTTOU   : ".TTOU",
+                                                             SIGURG    : ".URG",
+                                                             SIGXCPU   : ".XCPU",
+                                                             SIGXFSZ   : ".XFSZ",
+                                                             SIGVTALRM : ".VTALRM",
+                                                             SIGPROF   : ".PROF",
+                                                             SIGWINCH  : ".WINCH",
+                                                             SIGIO     : ".IO",
+                                                             SIGPWR    : ".PWR",
+                                                             SIGSYS    : ".SYS"]
 
 public enum Signal {
     case HUP
@@ -91,13 +139,11 @@ public enum Signal {
     __SIGRTMIN returns 32 which is an invalid signal.
     $ uname -a
     Linux fluffy-laptop 4.10.0-38-generic #42~16.04.1-Ubuntu SMP Tue Oct 10 16:32:20 UTC 2017 x86_64 x86_64 x86_64 GNU/Linux
+
+    SIGRTMIN and SIGRTMAX seem tobe defined under macOS etc.
 */
     public static let SIGRTMIN: CInt = 34
     public static let SIGRTMAX: CInt = 64
-#else
-    // Hoping these are correct on macOS etc. as i have no way of testing (except travis maybe?).
-    public static let SIGRTMIN = CInt(__SIGRTMIN)
-    public static let SIGRTMAX = CInt(__SIGRTMAX)
 #endif
 
     public static let minRealTimeSignal: Int = 1
@@ -256,7 +302,7 @@ extension Signal {
             return ".RT(\(number - (Signal.SIGRTMIN - 1)))"
         }
 
-        return _rawDescription[Int(number - 1)]
+        return _rawDescription[number]!
     }
 
     public var rawOSDescription: String {
@@ -266,7 +312,7 @@ extension Signal {
             return "\(_SIGRTMIN) + \((number - 1) - (Signal.SIGRTMIN - 1))"
         }
 
-        return _rawOSDescription[Int(number - 1)]
+        return _rawOSDescription[number]!
     }
 }
 
