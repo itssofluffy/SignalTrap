@@ -26,6 +26,7 @@ import Glibc
 import Darwin
 #endif
 
+#if os(Linux)
 fileprivate let _rawOSDescription: Dictionary<CInt, String> = [SIGHUP    : "SIGHUP",
                                                                SIGINT    : "SIGINT",
                                                                SIGQUIT   : "SIGQUIT",
@@ -91,6 +92,67 @@ fileprivate let _rawDescription: Dictionary<CInt, String> = [SIGHUP    : ".HUP",
                                                              SIGIO     : ".IO",
                                                              SIGPWR    : ".PWR",
                                                              SIGSYS    : ".SYS"]
+#else
+fileprivate let _rawOSDescription: Dictionary<CInt, String> = [SIGHUP    : "SIGHUP",
+                                                               SIGINT    : "SIGINT",
+                                                               SIGQUIT   : "SIGQUIT",
+                                                               SIGILL    : "SIGILL",
+                                                               SIGTRAP   : "SIGTRAP",
+                                                               SIGABRT   : "SIGABRT",
+                                                               SIGBUS    : "SIGBUS",
+                                                               SIGFPE    : "SIGFPE",
+                                                               SIGKILL   : "SIGKILL",
+                                                               SIGUSR1   : "SIGUSR1",
+                                                               SIGSEGV   : "SIGSEGV",
+                                                               SIGUSR2   : "SIGUSR2",
+                                                               SIGPIPE   : "SIGPIPE",
+                                                               SIGALRM   : "SIGALRM",
+                                                               SIGTERM   : "SIGTERM",
+                                                               SIGCHLD   : "SIGCHLD",
+                                                               SIGCONT   : "SIGCONT",
+                                                               SIGSTOP   : "SIGSTOP",
+                                                               SIGTSTP   : "SIGTSTP",
+                                                               SIGTTIN   : "SIGTTIN",
+                                                               SIGTTOU   : "SIGTTOU",
+                                                               SIGURG    : "SIGURG",
+                                                               SIGXCPU   : "SIGXCPU",
+                                                               SIGXFSZ   : "SIGXFSZ",
+                                                               SIGVTALRM : "SIGVTALRM",
+                                                               SIGPROF   : "SIGPROF",
+                                                               SIGWINCH  : "SIGWINCH",
+                                                               SIGIO     : "SIGIO",
+                                                               SIGSYS    : "SIGSYS"]
+
+fileprivate let _rawDescription: Dictionary<CInt, String> = [SIGHUP    : ".HUP",
+                                                             SIGINT    : ".INT",
+                                                             SIGQUIT   : ".QUIT",
+                                                             SIGILL    : ".ILL",
+                                                             SIGTRAP   : ".TRAP",
+                                                             SIGABRT   : ".ABRT",
+                                                             SIGBUS    : ".BUS",
+                                                             SIGFPE    : ".FPE",
+                                                             SIGKILL   : ".KILL",
+                                                             SIGUSR1   : ".USR1",
+                                                             SIGSEGV   : ".SEGV",
+                                                             SIGUSR2   : ".USR2",
+                                                             SIGPIPE   : ".PIPE",
+                                                             SIGALRM   : ".ALRM",
+                                                             SIGTERM   : ".TERM",
+                                                             SIGCHLD   : ".CHLD",
+                                                             SIGCONT   : ".CONT",
+                                                             SIGSTOP   : ".STOP",
+                                                             SIGTSTP   : ".TSTP",
+                                                             SIGTTIN   : ".TTIN",
+                                                             SIGTTOU   : ".TTOU",
+                                                             SIGURG    : ".URG",
+                                                             SIGXCPU   : ".XCPU",
+                                                             SIGXFSZ   : ".XFSZ",
+                                                             SIGVTALRM : ".VTALRM",
+                                                             SIGPROF   : ".PROF",
+                                                             SIGWINCH  : ".WINCH",
+                                                             SIGIO     : ".IO",
+                                                             SIGSYS    : ".SYS"]
+#endif
 
 public enum Signal {
     case HUP
@@ -108,7 +170,9 @@ public enum Signal {
     case PIPE
     case ALRM
     case TERM
+#if os(Linux)
     case STKFLT
+#endif
     case CHLD
     case CONT
     case STOP
@@ -122,10 +186,15 @@ public enum Signal {
     case PROF
     case WINCH
     case IO
+#if os(Linux)
     case PWR
+#endif
     case SYS
+#if os(Linux)
     case RT(Int)
+#endif
 
+#if os(Linux)
     public static let allSignals = Array(arrayLiteral: HUP, INT, QUIT, ILL, TRAP,
                                                        ABRT, BUS, FPE, /* KILL, */ USR1,
                                                        SEGV, USR2, PIPE, ALRM, TERM,
@@ -133,23 +202,31 @@ public enum Signal {
                                                        TTIN, TTOU, URG, XCPU, XFSZ,
                                                        VTALRM, PROF, WINCH, IO, PWR,
                                                        SYS)
+#else
+    public static let allSignals = Array(arrayLiteral: HUP, INT, QUIT, ILL, TRAP,
+                                                       ABRT, BUS, FPE, /* KILL, */ USR1,
+                                                       SEGV, USR2, PIPE, ALRM, TERM,
+                                                       CHLD, CONT, /* STOP, */ TSTP,
+                                                       TTIN, TTOU, URG, XCPU, XFSZ,
+                                                       VTALRM, PROF, WINCH, IO,
+                                                       SYS)
+#endif
 
 #if os(Linux)
 /*
     __SIGRTMIN returns 32 which is an invalid signal.
     $ uname -a
     Linux fluffy-laptop 4.10.0-38-generic #42~16.04.1-Ubuntu SMP Tue Oct 10 16:32:20 UTC 2017 x86_64 x86_64 x86_64 GNU/Linux
-
-    SIGRTMIN and SIGRTMAX seem tobe defined under macOS etc.
 */
     public static let SIGRTMIN: CInt = 34
     public static let SIGRTMAX: CInt = 64
-#endif
 
     public static let minRealTimeSignal: Int = 1
     public static let maxRealTimeSignal = Int(SIGRTMAX - SIGRTMIN)
+#endif
 
     public init(rawValue: CInt) {
+#if os(Linux)
         switch rawValue {
             case SIGHUP:
                 self = .HUP
@@ -220,9 +297,74 @@ public enum Signal {
 
                 self = .RT(Int(rawValue - (Signal.SIGRTMIN - 1)))
         }
+#else
+        switch rawValue {
+            case SIGHUP:
+                self = .HUP
+            case SIGINT:
+                self = .INT
+            case SIGQUIT:
+                self = .QUIT
+            case SIGILL:
+                self = .ILL
+            case SIGTRAP:
+                self = .TRAP
+            case SIGABRT:
+                self = .ABRT
+            case SIGBUS:
+                self = .BUS
+            case SIGFPE:
+                self = .FPE
+            case SIGKILL:
+                self = .KILL
+            case SIGUSR1:
+                self = .USR1
+            case SIGSEGV:
+                self = .SEGV
+            case SIGUSR2:
+                self = .USR2
+            case SIGPIPE:
+                self = .PIPE
+            case SIGALRM:
+                self = .ALRM
+            case SIGTERM:
+                self = .TERM
+            case SIGCHLD:
+                self = .CHLD
+            case SIGCONT:
+                self = .CONT
+            case SIGSTOP:
+                self = .STOP
+            case SIGTSTP:
+                self = .TSTP
+            case SIGTTIN:
+                self = .TTIN
+            case SIGTTOU:
+                self = .TTOU
+            case SIGURG:
+                self = .URG
+            case SIGXCPU:
+                self = .XCPU
+            case SIGXFSZ:
+                self = .XFSZ
+            case SIGVTALRM:
+                self = .VTALRM
+            case SIGPROF:
+                self = .PROF
+            case SIGWINCH:
+                self = .WINCH
+            case SIGIO:
+                self = .IO
+            case SIGSYS:
+                self = .SYS
+            default:
+                fatalError("Unknown signal #\(rawValue)")
+        }
+#endif
     }
 
     public var number: CInt {
+#if os(Linux)
         switch self {
             case .HUP:
                 return SIGHUP
@@ -289,6 +431,68 @@ public enum Signal {
             case .RT(let signal):
                 return (Signal.SIGRTMIN - 1) + CInt(signal)
         }
+#else
+        switch self {
+            case .HUP:
+                return SIGHUP
+            case .INT:
+                return SIGINT
+            case .QUIT:
+                return SIGQUIT
+            case .ILL:
+                return SIGILL
+            case .TRAP:
+                return SIGTRAP
+            case .ABRT:
+                return SIGABRT
+            case .BUS:
+                return SIGBUS
+            case .FPE:
+                return SIGFPE
+            case .KILL:
+                return SIGKILL
+            case .USR1:
+                return SIGUSR1
+            case .SEGV:
+                return SIGSEGV
+            case .USR2:
+                return SIGUSR2
+            case .PIPE:
+                return SIGPIPE
+            case .ALRM:
+                return SIGALRM
+            case .TERM:
+                return SIGTERM
+            case .CHLD:
+                return SIGCHLD
+            case .CONT:
+                return SIGCONT
+            case .STOP:
+                return SIGSTOP
+            case .TSTP:
+                return SIGTSTP
+            case .TTIN:
+                return SIGTTIN
+            case .TTOU:
+                return SIGTTOU
+            case .URG:
+                return SIGURG
+            case .XCPU:
+                return SIGXCPU
+            case .XFSZ:
+                return SIGXFSZ
+            case .VTALRM:
+                return SIGVTALRM
+            case .PROF:
+                return SIGPROF
+            case .WINCH:
+                return SIGWINCH
+            case .IO:
+                return SIGIO
+            case .SYS:
+                return SIGSYS
+        }
+#endif
     }
 }
 
@@ -298,19 +502,23 @@ extension Signal {
     }
 
     public var rawDescription: String {
+#if os(Linux)
         if (number >= Signal.SIGRTMIN) {
             return ".RT(\(number - (Signal.SIGRTMIN - 1)))"
         }
+#endif
 
         return _rawDescription[number]!
     }
 
     public var rawOSDescription: String {
+#if os(Linux)
         if (number == Signal.SIGRTMIN) {
             return _SIGRTMIN
         } else if (number > Signal.SIGRTMIN) {
             return "\(_SIGRTMIN) + \((number - 1) - (Signal.SIGRTMIN - 1))"
         }
+#endif
 
         return _rawOSDescription[number]!
     }
