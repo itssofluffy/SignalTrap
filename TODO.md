@@ -1,1 +1,1 @@
-- Need to determine a reliable real-time signal range.
+- Need to determine a reliable real-time signal range for apple platforms (presumine real-time signals can be implemented in apple platforms!).

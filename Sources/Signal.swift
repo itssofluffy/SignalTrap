@@ -222,11 +222,11 @@ public enum Signal {
     Swift version 4.0.3 (swift-4.0.3-RELEASE)
     Target: x86_64-unknown-linux-gnu
 
-    For this reason as we can't determine a reliable real-time signal range
-    this feature is switched off for none linux systems.
+    For this reason as we can't determine a reliable real-time signal range using what should be
+    reliable properites this feature is switched off for none linux systems.
 */
-    public static let SIGRTMIN: CInt = 34
-    public static let SIGRTMAX: CInt = 64
+    public static let SIGRTMIN: CInt = __libc_current_sigrtmin()
+    public static let SIGRTMAX: CInt = __libc_current_sigrtmax()
 
     public static let minRealTimeSignal: Int = 1
     public static let maxRealTimeSignal = Int(SIGRTMAX - SIGRTMIN)
