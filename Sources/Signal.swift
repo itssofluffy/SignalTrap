@@ -225,8 +225,8 @@ public enum Signal {
     For this reason as we can't determine a reliable real-time signal range using what should be
     reliable properites this feature is switched off for none linux systems.
 */
-    public static let SIGRTMIN: CInt = __libc_current_sigrtmin()
-    public static let SIGRTMAX: CInt = __libc_current_sigrtmax()
+    fileprivate static let SIGRTMIN: CInt = __libc_current_sigrtmin()
+    fileprivate static let SIGRTMAX: CInt = __libc_current_sigrtmax()
 
     public static let minRealTimeSignal: Int = 1
     public static let maxRealTimeSignal = Int(SIGRTMAX - SIGRTMIN)

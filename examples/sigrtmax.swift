@@ -1,5 +1,5 @@
 /*
-    sigrtmin.swift
+    sigrtmax.swift
 
     Copyright (c) 2018 Stephen Whittle  All rights reserved.
 
