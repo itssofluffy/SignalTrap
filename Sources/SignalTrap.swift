@@ -44,6 +44,8 @@ public func trap(signal: Signal, action: SigactionHandler) throws {
     guard (errno == 0) else {
         throw SignalTrapError.Trap(code: errno, signal: signal)
     }
+
+    _signalState[signal.number] = .Registered
 }
 
 public func trap(signals: Array<Signal>, action: SigactionHandler) throws {
@@ -66,7 +68,7 @@ public func raise(signal: Signal) throws {
 #endif
 
     guard (errno == 0) else {
-        throw SignalTrapError.Ignore(code: errno, signal: signal)
+        throw SignalTrapError.Raise(code: errno, signal: signal)
     }
 }
 
@@ -86,6 +88,8 @@ public func ignore(signal: Signal) throws {
     guard (errno == 0) else {
         throw SignalTrapError.Ignore(code: errno, signal: signal)
     }
+
+    _signalState[signal.number] = .Ignore
 }
 
 public func ignore(signals: Array<Signal>) throws {
@@ -104,6 +108,8 @@ public func restore(signal: Signal) throws {
     guard (errno == 0) else {
         throw SignalTrapError.Restore(code: errno, signal: signal)
     }
+
+    _signalState[signal.number] = .Default
 }
 
 public func restore(signals: Array<Signal>) throws {

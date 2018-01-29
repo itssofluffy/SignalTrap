@@ -159,6 +159,8 @@ fileprivate let _enumDescription: Dictionary<CInt, String> = [SIGHUP    : ".HUP"
                                                               SIGSYS    : ".SYS"]
 #endif
 
+internal var _signalState = Dictionary<CInt, SignalState>()
+
 fileprivate func _unknownSignal(_ number: CInt) -> String {
     return "Unknown signal #\(number)"
 }
@@ -496,6 +498,14 @@ public enum Signal {
                 return SIGSYS
         }
 #endif
+    }
+
+    public var state: SignalState {
+        if let state = _signalState[number] {
+            return state
+        }
+
+        return .Default
     }
 }
 
