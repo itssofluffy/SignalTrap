@@ -25,7 +25,7 @@ import SignalTrap
 
 var count = 0
 var started: TimeInterval = 0
-var signalToSend = Signal.TERM
+let signalToSend = Signal.TERM
 
 do {
     try trap(signals: Signal.allSignals) { signal in
@@ -56,5 +56,7 @@ do {
 } catch {
     print("an unexpected error '\(error)' has occured in the library libSignalTrap.")
 }
+
+exit(EXIT_FAILURE)
 
 // Or stop it yourself with cntrl+C

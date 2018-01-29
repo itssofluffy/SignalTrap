@@ -6,3 +6,5 @@ Package.resolved
 examples/all-signals
 examples/sigrtmax
 examples/sigrtmin
+examples/test-ignore
+examples/test-state

@@ -26,14 +26,13 @@ import SignalTrap
 
 var count = 0
 var started: TimeInterval = 0
-let realtimeSignal = Signal.minRealTimeSignal
-var signalToSend = Signal.RT(realtimeSignal)
+let signalToSend = Signal.RT(Signal.minRealTimeSignal)
 
 do {
-    var toTrap = Signal.allSignals
-    toTrap.append(signalToSend)
+    var signalsToTrap = Signal.allSignals
+    signalsToTrap.append(signalToSend)
 
-    try trap(signals: toTrap) { signal in
+    try trap(signals: signalsToTrap) { signal in
         let runtime = Date().timeIntervalSince1970 - started
 
         print("received signal: \(Signal(rawValue: signal).description)")
@@ -61,6 +60,8 @@ do {
 } catch {
     print("an unexpected error '\(error)' has occured in the library libSignalTrap.")
 }
+
+exit(EXIT_FAILURE)
 
 // Or stop it yourself with cntrl+C
 #else

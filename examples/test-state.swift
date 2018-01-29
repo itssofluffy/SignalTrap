@@ -1,5 +1,5 @@
 /*
-    sigrtmax.swift
+    test-state.swift
 
     Copyright (c) 2018 Stephen Whittle  All rights reserved.
 
@@ -20,41 +20,34 @@
     IN THE SOFTWARE.
 */
 
-#if os(Linux)
 import Foundation
 import SignalTrap
 
 var count = 0
 var started: TimeInterval = 0
-let signalToSend = Signal.RT(Signal.maxRealTimeSignal)
+let signalToSend = Signal.TERM
 
 do {
-    var signalsToTrap = Signal.allSignals
-    signalsToTrap.append(signalToSend)
+    print("signal: \(signalToSend), state: \(signalToSend.state)")
 
-    try trap(signals: signalsToTrap) { signal in
-        let runtime = Date().timeIntervalSince1970 - started
+    try ignore(signal: signalToSend)
 
+    print("signal: \(signalToSend), state: \(signalToSend.state)")
+
+    try restore(signal: signalToSend)
+
+    print("signal: \(signalToSend), state: \(signalToSend.state)")
+
+    try trap(signal: signalToSend) { signal in
         print("received signal: \(Signal(rawValue: signal).description)")
-        print("count          : \(count)")
-        print("runtime        : \(runtime) seconds")
 
         exit(EXIT_SUCCESS)
     }
 
-    started = Date().timeIntervalSince1970
+    print("signal: \(signalToSend), state: \(signalToSend.state)")
 
-    alarm(2) // Wait 2 seconds for the program to be killed
-
-    while true {
-        print("timestamp: \(Date().timeIntervalSince1970)")
-        count += 1
-              
-        if (count >= 100000) {
-            print("sending signal : \(signalToSend.enumDescription)/\(signalToSend.enumOSDescription)/#\(signalToSend.number)")
-            try raise(signal: signalToSend)
-        }
-    }
+    print("sending signal : \(signalToSend.enumDescription)/\(signalToSend.enumOSDescription)/#\(signalToSend.number)")
+    try raise(signal: signalToSend)
 } catch let error as SignalTrapError {
     print(error)
 } catch {
@@ -62,8 +55,3 @@ do {
 }
 
 exit(EXIT_FAILURE)
-
-// Or stop it yourself with cntrl+C
-#else
-fatalError("Unsupported Function in OS")
-#endif
