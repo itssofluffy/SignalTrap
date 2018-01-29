@@ -22,6 +22,7 @@
 
 #if os(Linux)
 import Glibc
+import ISFLibrary
 #else
 import Darwin
 #endif
@@ -59,7 +60,7 @@ fileprivate let _enumOSDescription: Dictionary<CInt, String> = [SIGHUP    : "SIG
                                                                 SIGPWR    : "SIGPWR",
                                                                 SIGSYS    : "SIGSYS"]
 
-fileprivate let _SIGRTMIN = "SIGMINRT"
+fileprivate let _SIGRTMIN = "SIGRTMIN"
 
 fileprivate let _enumDescription: Dictionary<CInt, String> = [SIGHUP    : ".HUP",
                                                               SIGINT    : ".INT",
@@ -92,6 +93,10 @@ fileprivate let _enumDescription: Dictionary<CInt, String> = [SIGHUP    : ".HUP"
                                                               SIGIO     : ".IO",
                                                               SIGPWR    : ".PWR",
                                                               SIGSYS    : ".SYS"]
+
+fileprivate let SIGRTMIN = __libc_current_sigrtmin()
+fileprivate let SIGRTMAX = __libc_current_sigrtmax()
+
 #else
 fileprivate let _enumOSDescription: Dictionary<CInt, String> = [SIGHUP    : "SIGHUP",
                                                                 SIGINT    : "SIGINT",
@@ -153,6 +158,10 @@ fileprivate let _enumDescription: Dictionary<CInt, String> = [SIGHUP    : ".HUP"
                                                               SIGIO     : ".IO",
                                                               SIGSYS    : ".SYS"]
 #endif
+
+fileprivate func _unknownSignal(_ number: CInt) -> String {
+    return "Unknown signal #\(number)"
+}
 
 public enum Signal {
     case HUP
@@ -213,22 +222,7 @@ public enum Signal {
 #endif
 
 #if os(Linux)
-/*
-    __SIGRTMIN returns 32 which is an invalid signal and __SIGRTMAX returns 64.
-
-    $ uname --all
-    Linux ############# 4.10.0-38-generic #42~16.04.1-Ubuntu SMP Tue Oct 10 16:32:20 UTC 2017 x86_64 x86_64 x86_64 GNU/Linux
-    $ swift --version
-    Swift version 4.0.3 (swift-4.0.3-RELEASE)
-    Target: x86_64-unknown-linux-gnu
-
-    For this reason as we can't determine a reliable real-time signal range using what should be
-    reliable properites this feature is switched off for none linux systems.
-*/
-    fileprivate static let SIGRTMIN: CInt = __libc_current_sigrtmin()
-    fileprivate static let SIGRTMAX: CInt = __libc_current_sigrtmax()
-
-    public static let minRealTimeSignal: Int = 1
+    public static let minRealTimeSignal: Int = 0
     public static let maxRealTimeSignal = Int(SIGRTMAX - SIGRTMIN)
 #endif
 
@@ -298,11 +292,13 @@ public enum Signal {
             case SIGSYS:
                 self = .SYS
             default:
-                guard (rawValue >= Signal.SIGRTMIN && rawValue <= Signal.SIGRTMAX) else {
-                    fatalError("Unknown signal #\(rawValue)")
+                guard (rawValue >= SIGRTMIN && rawValue <= SIGRTMAX) else {
+                    fatalError(_unknownSignal(rawValue))
                 }
 
-                self = .RT(Int(rawValue - (Signal.SIGRTMIN - 1)))
+                let realtimeSignal = Int(rawValue - SIGRTMIN)
+
+                self = .RT(clamp(value: realtimeSignal, lower: Signal.minRealTimeSignal, upper: Signal.maxRealTimeSignal))
         }
 #else
         switch rawValue {
@@ -365,7 +361,7 @@ public enum Signal {
             case SIGSYS:
                 self = .SYS
             default:
-                fatalError("Unknown signal #\(rawValue)")
+                fatalError(_unknownSignal(rawValue))
         }
 #endif
     }
@@ -435,8 +431,8 @@ public enum Signal {
                 return SIGPWR
             case .SYS:
                 return SIGSYS
-            case .RT(let signal):
-                return (Signal.SIGRTMIN - 1) + CInt(signal)
+            case .RT(let realtimeSignal):
+                return SIGRTMIN + CInt(realtimeSignal)
         }
 #else
         switch self {
@@ -510,24 +506,34 @@ extension Signal {
 
     public var enumDescription: String {
 #if os(Linux)
-        if (number >= Signal.SIGRTMIN) {
-            return ".RT(\(number - (Signal.SIGRTMIN - 1)))"
+        if (number >= SIGRTMIN) {
+            let realtimeSignal = number - SIGRTMIN
+            return ".RT(\(realtimeSignal))"
         }
 #endif
 
-        return _enumDescription[number]!
+        if let description = _enumDescription[number] {
+            return description
+        }
+
+        fatalError(_unknownSignal(number))
     }
 
     public var enumOSDescription: String {
 #if os(Linux)
-        if (number == Signal.SIGRTMIN) {
+        if (number == SIGRTMIN) {
             return _SIGRTMIN
-        } else if (number > Signal.SIGRTMIN) {
-            return "\(_SIGRTMIN) + \((number - 1) - (Signal.SIGRTMIN - 1))"
+        } else if (number > SIGRTMIN) {
+            let sigrtminPlus = number - SIGRTMIN
+            return "\(_SIGRTMIN)+\(sigrtminPlus))"
         }
 #endif
 
-        return _enumOSDescription[number]!
+        if let description = _enumOSDescription[number] {
+            return description
+        }
+
+        fatalError(_unknownSignal(number))
     }
 }
 

@@ -27,10 +27,11 @@ import SignalTrap
 var count = 0
 var started: TimeInterval = 0
 let realtimeSignal = Signal.maxRealTimeSignal
+var signalToSend = Signal.RT(realtimeSignal)
 
 do {
     var toTrap = Signal.allSignals
-    toTrap.append(.RT(realtimeSignal))
+    toTrap.append(signalToSend)
 
     try trap(signals: toTrap) { signal in
         let runtime = Date().timeIntervalSince1970 - started
@@ -51,8 +52,8 @@ do {
         count += 1
               
         if (count >= 100000) {
-            print("sending signal .RT(\(realtimeSignal))")
-            try raise(signal: .RT(realtimeSignal))
+            print("sending signal : \(signalToSend.enumDescription)/\(signalToSend.enumOSDescription)/#\(signalToSend.number)")
+            try raise(signal: signalToSend)
         }
     }
 } catch let error as SignalTrapError {

@@ -25,6 +25,7 @@ import SignalTrap
 
 var count = 0
 var started: TimeInterval = 0
+var signalToSend = Signal.TERM
 
 do {
     try trap(signals: Signal.allSignals) { signal in
@@ -46,8 +47,8 @@ do {
         count += 1
               
         if (count >= 100000) {
-            print("sending signal .TERM")
-            try raise(signal: .TERM)
+            print("sending signal : \(signalToSend.enumDescription)/\(signalToSend.enumOSDescription)/#\(signalToSend.number)")
+            try raise(signal: signalToSend)
         }
     }
 } catch let error as SignalTrapError {

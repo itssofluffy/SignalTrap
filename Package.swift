@@ -23,9 +23,18 @@
 import PackageDescription
 
 #if os(Linux) || os(macOS) || os(iOS) || os(tvOS) || os(watchOS)
+#if os(Linux)
+let package = Package(
+    name: "SignalTrap",
+    dependencies: [
+        .Package (url: "https://github.com/itssofluffy/ISFLibrary.git", majorVersion: 0)
+    ]
+)
+#else
 let package = Package(
     name: "SignalTrap"
 )
+#endif
 
 let staticLibrary = Product(
     name:    "SignalTrap",
