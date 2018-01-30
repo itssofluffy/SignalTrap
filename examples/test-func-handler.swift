@@ -1,5 +1,5 @@
 /*
-    Signals.swift
+    test-func-handler.swift
 
     Copyright (c) 2018 Stephen Whittle  All rights reserved.
 
@@ -20,7 +20,31 @@
     IN THE SOFTWARE.
 */
 
-public struct Signals {
-    public let signal: Signal
-    public let action: SigactionHandler
+import Foundation
+import SignalTrap
+
+func handlerMessage(handler: String, signal: Signal) -> String {
+    return "\(handler) received signal: \(signal.description)"
 }
+
+func handlerA(signal: CInt) -> Void {
+    print(handlerMessage(handler: #function, signal: Signal(rawValue: signal)))
+}
+
+func handlerB(signal: CInt) -> Void {
+    print(handlerMessage(handler: #function, signal: Signal(rawValue: signal)))
+}
+
+do {
+    try trap(signal: .USR1, handler: handlerA)
+    try trap(signal: .USR2, handler: handlerB)
+
+    try raise(signal: .USR1)
+    try raise(signal: .USR2)
+} catch let error as SignalTrapError {
+      print(error)
+} catch {
+      print("an unexpected error '\(error)' has occured in the library libSignalTrap.")
+}
+
+exit(EXIT_SUCCESS)

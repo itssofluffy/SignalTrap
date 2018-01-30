@@ -6,5 +6,7 @@ Package.resolved
 examples/all-signals
 examples/sigrtmax
 examples/sigrtmin
+examples/test-array-func-handler
+examples/test-func-handler
 examples/test-ignore
 examples/test-state

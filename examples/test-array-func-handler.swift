@@ -1,5 +1,5 @@
 /*
-    test-state.swift
+    test-array-func-handler.swift
 
     Copyright (c) 2018 Stephen Whittle  All rights reserved.
 
@@ -23,42 +23,30 @@
 import Foundation
 import SignalTrap
 
-var count = 0
-var started: TimeInterval = 0
-let signalToSend = Signal.TERM
-
-func signalDetails() {
-    print("signal: \(signalToSend), state: \(signalToSend.state)")
+func handlerMessage(handler: String, signal: Signal) -> String {
+    return "\(handler) received signal: \(signal.description)"
 }
 
+func handlerA(signal: CInt) -> Void {
+    print(handlerMessage(handler: #function, signal: Signal(rawValue: signal)))
+}
+
+func handlerB(signal: CInt) -> Void {
+    print(handlerMessage(handler: #function, signal: Signal(rawValue: signal)))
+}
+
+let signalHandlers: Array<SignalHandler> = [SignalHandler(signal: .USR1, handler: handlerA),
+                                            SignalHandler(signal: .USR2, handler: handlerB)]
 do {
-    signalDetails()
+    try trap(signals: signalHandlers)
 
-    print("setting signal \(signalToSend.enumDescription) state to ignore")
-    try ignore(signal: signalToSend)
-
-    signalDetails()
-
-    print("setting signal \(signalToSend.enumDescription) state to default")
-    try restore(signal: signalToSend)
-
-    signalDetails()
-
-    print("setting signal \(signalToSend.enumDescription) state to registerd")
-    try trap(signal: signalToSend) { signal in
-        print("received signal: \(Signal(rawValue: signal).description)")
-
-        exit(EXIT_SUCCESS)
+    for signalHandler in signalHandlers {
+        try raise(signal: signalHandler.signal)
     }
-
-    signalDetails()
-
-    print("sending signal : \(signalToSend.enumDescription)/\(signalToSend.enumOSDescription)/#\(signalToSend.number)")
-    try raise(signal: signalToSend)
 } catch let error as SignalTrapError {
-    print(error)
+      print(error)
 } catch {
-    print("an unexpected error '\(error)' has occured in the library libSignalTrap.")
+      print("an unexpected error '\(error)' has occured in the library libSignalTrap.")
 }
 
-exit(EXIT_FAILURE)
+exit(EXIT_SUCCESS)

@@ -26,15 +26,15 @@ import Glibc
 import Darwin
 #endif
 
-public func trap(signal: Signal, action: SigactionHandler) throws {
+public func trap(signal: Signal, handler: SigactionHandler) throws {
 #if os(Linux)
     var signalAction = sigaction()
 
-    signalAction.__sigaction_handler = unsafeBitCast(action, to: sigaction.__Unnamed_union___sigaction_handler.self)
+    signalAction.__sigaction_handler = unsafeBitCast(handler, to: sigaction.__Unnamed_union___sigaction_handler.self)
 
     sigaction(signal.number, &signalAction, nil)
 #else
-    var signalAction = sigaction(__sigaction_u: unsafeBitCast(action, to: __sigaction_u.self), sa_mask: 0, sa_flags: 0)
+    var signalAction = sigaction(__sigaction_u: unsafeBitCast(handler, to: __sigaction_u.self), sa_mask: 0, sa_flags: 0)
             
     _ = withUnsafePointer(to: &signalAction) { actionPointer in
         sigaction(signal.number, actionPointer, nil)
@@ -48,15 +48,15 @@ public func trap(signal: Signal, action: SigactionHandler) throws {
     _signalState[signal.number] = .Registered
 }
 
-public func trap(signals: Array<Signal>, action: SigactionHandler) throws {
+public func trap(signals: Array<Signal>, handler: SigactionHandler) throws {
     for signal in signals {
-        try trap(signal: signal, action: action)
+        try trap(signal: signal, handler: handler)
     }
 }
 
-public func trap(handlers: Array<Signals>) throws {
-    for handler in handlers {
-        try trap(signal: handler.signal, action: handler.action)
+public func trap(signals: Array<SignalHandler>) throws {
+    for signal in signals {
+        try trap(signal: signal.signal, handler: signal.handler)
     }
 }
 
